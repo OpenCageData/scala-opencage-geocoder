@@ -53,10 +53,10 @@ To make sure you don't leave resources dangling around, make sure you call the `
 
 ## Parameters
 
-The parameters sent by the client to the OpenCage APIs can be overridden (see [this](https://geocoder.opencagedata.com/api#forward-opt), by using the `params` parameter:
+The parameters sent by the client to the OpenCage APIs can be overridden (see [this](https://geocoder.opencagedata.com/api#forward-opt)), by using the `params` parameter:
  
 ```scala
-    val bounds = Some(minimumLongitude, minimumLatitude, maximumLongitue, maximumLatitutde)
+    val bounds = Some((minimumLongitude, minimumLatitude, maximumLongitude, maximumLatitude))
     
     val params = OpenCageClientParams(abbreviate = true,
                                      bounds = bounds,
