@@ -3,16 +3,15 @@ package com.github.nmdguerreiro.opencage.geocoder
 import java.time.Instant
 import java.util.UUID
 
-import com.github.nmdguerreiro.opencage.geocoder.parts._
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
-import org.scalatest.{BeforeAndAfter, AsyncFlatSpec, BeforeAndAfterEach, Matchers}
+import org.scalatest.{AsyncFlatSpec, BeforeAndAfter, BeforeAndAfterEach, Matchers}
 
 import scala.reflect.ClassTag
 
-class OpencageClientTest extends AsyncFlatSpec with Matchers with BeforeAndAfterEach {
+class OpencageClientTest extends AsyncFlatSpec with Matchers with BeforeAndAfterEach with BeforeAndAfter {
 
   val wireMockServer = new WireMockServer(wireMockConfig().dynamicPort())
   val host = "localhost"
@@ -22,14 +21,17 @@ class OpencageClientTest extends AsyncFlatSpec with Matchers with BeforeAndAfter
   val validKey = "1234"
   val invalidKey = "2345"
 
-  override def beforeEach {
+  before {
     wireMockServer.start()
     WireMock.configureFor(host, wireMockServer.port())
   }
 
+  after {
+    wireMockServer.stop()
+  }
+
   override def afterEach {
     wireMockServer.resetAll()
-    wireMockServer.stop()
   }
 
   "Reverse geocoder" should "make a call with the default parameters" in {
