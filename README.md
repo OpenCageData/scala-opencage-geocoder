@@ -22,7 +22,7 @@ To perform forward geocoding, all you need to do is call the `forwardGeocode` me
     try {
         val responseFuture = client.forwardGeocode("address to forward geocode")
         val response = Await.result(responseFuture, 5 seconds)
-        }
+    }
     finally {
         client.close()
     }
