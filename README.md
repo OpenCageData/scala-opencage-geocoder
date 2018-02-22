@@ -121,3 +121,8 @@ Or by specifying options, such as a connection timeout or proxy by using custom 
 ```
 
 Finally, you can also implement your own `sttp` backend, as long as it's asynchronous.
+
+License
+-------
+
+[MIT License](LICENSE.md).
