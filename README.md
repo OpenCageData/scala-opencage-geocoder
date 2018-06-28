@@ -2,8 +2,8 @@
 
 [![Build Status](https://travis-ci.org/nmdguerreiro/scala-opencage-geocoder.svg?branch=master)](https://travis-ci.org/nmdguerreiro/scala-opencage-geocoder)
 
-This is a client library for the [OpenCage Forward and Reverse geocoding APIs](https://geocoder.opencagedata.com/api).
-You will need to have an API key to be able to issue requests. You can register for free [here](https://geocoder.opencagedata.com/users/sign_up).
+This is a client library for the [OpenCage Forward and Reverse geocoding APIs](https://opencagedata.com/api).
+You will need to have an API key to be able to issue requests. You can register for free [here](https://opencagedata.com/users/sign_up).
 
 ## Building
 
@@ -55,7 +55,7 @@ To make sure you don't leave resources dangling around, make sure you call the `
 
 ## Parameters
 
-The parameters sent by the client to the OpenCage APIs can be overridden (see [this](https://geocoder.opencagedata.com/api#forward-opt)), by using the `params` parameter:
+The parameters sent by the client to the OpenCage APIs can be overridden (see [this](https://opencagedata.com/api#forward-opt)), by using the `params` parameter:
  
 ```scala
     val bounds = Some((minimumLongitude, minimumLatitude, maximumLongitude, maximumLatitude))
