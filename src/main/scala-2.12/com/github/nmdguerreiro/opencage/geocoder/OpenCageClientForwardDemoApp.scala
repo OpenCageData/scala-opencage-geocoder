@@ -23,7 +23,7 @@ object OpenCageClientForwardDemoApp {
 
         val client = new OpenCageClient(config.key)
         val responseFuture = client.forwardGeocode(config.query)
-        val response = Await.result(responseFuture, 5 seconds)
+        val response = Await.result(responseFuture, 5.seconds)
 
         println(response)
 
