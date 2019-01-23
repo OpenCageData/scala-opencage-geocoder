@@ -5,6 +5,9 @@
 This is a client library for the [OpenCage Forward and Reverse geocoding APIs](https://opencagedata.com/api).
 You will need to have an API key to be able to issue requests. You can register for free [here](https://opencagedata.com/users/sign_up).
 
+Before using this library please have a look at [best practices for using the OpenCage API](https://opencagedata.com/api#bestpractices), 
+particularly OpenCage's advice for [how to format forward geocoding queries](https://github.com/OpenCageData/opencagedata-misc-docs/blob/master/query-formatting.md).
+
 ## Building
 
 You'll need to install [sbt](https://www.scala-sbt.org/) first. Then you can just run:
