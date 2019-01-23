@@ -50,6 +50,18 @@ To perform reverse geocoding, all you need to do is call the `reverseGeocode` me
     }
 ```
 
+## No results
+
+Sometimes you query the OpenCage API and it cannot geocode your query, it was a valid query, but no results were found.
+You can check if that's the case by checking status code of the response and emptiness of the results.
+
+```scala
+val response = Await.result(responseFuture, 5.seconds)
+if (response.status.code == 200 & response.results.isEmpty) {
+  println("Ups, we can't geolocate your query")
+}
+```
+
 Note that the client is non-blocking, so if you're handling responses in an async way, you won't need to await for the future. 
 
 ## Closing the client
