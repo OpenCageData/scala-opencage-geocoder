@@ -2,6 +2,7 @@ package com.github.nmdguerreiro.opencage.geocoder
 
 import java.time.Instant
 import java.util.UUID
+import com.softwaremill.sttp.HeaderNames
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
@@ -55,7 +56,8 @@ class OpencageClientTest extends AsyncFlatSpec with Matchers with BeforeAndAfter
         verify(getRequestedFor(urlPathEqualTo(requestUrl))
           .withQueryParam("q", equalTo(reverseQuery))
           .withQueryParam("key", equalTo(validKey))
-          .withQueryParam("no_annotations", equalTo("1")))
+          .withQueryParam("no_annotations", equalTo("1"))
+          .withHeader(HeaderNames.UserAgent, equalTo("opencage-scala-client")))
 
         assert(wireMockServer.findAllUnmatchedRequests().size == 0)
       }
@@ -225,8 +227,8 @@ object ResponseData {
   val tomorrow = Instant.now().toEpochMilli / 1000 + 86400
 
   /**
-   * Valid response data
-   */
+    * Valid response data
+    */
 
   val validResponseString =
     s"""
@@ -355,8 +357,8 @@ object ResponseData {
     """.stripMargin
 
   /**
-   * Errors
-   */
+    * Errors
+    */
   val invalidRequestError = genericErrorMessage(400, "Bad, bad request!")
   val quotaExceededError = genericErrorMessage(402, "need more money")
   val invalidKeyError = genericErrorMessage(403, "You shall not pass!")

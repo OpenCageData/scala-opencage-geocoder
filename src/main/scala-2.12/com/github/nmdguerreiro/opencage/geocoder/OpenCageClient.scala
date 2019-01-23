@@ -2,7 +2,6 @@ package com.github.nmdguerreiro.opencage.geocoder
 
 import com.github.nmdguerreiro.opencage.geocoder.OpenCageClient.Scheme.Scheme
 import com.softwaremill.sttp._
-import com.softwaremill.sttp.StatusCodes
 import com.softwaremill.sttp.asynchttpclient.future.AsyncHttpClientFutureBackend
 import com.softwaremill.sttp.circe._
 import io.circe.parser._
@@ -33,7 +32,8 @@ class OpenCageClient(authKey: String,
                      hostname: String = OpenCageClient.defaultHostname,
                      port: Int = OpenCageClient.defaultPort,
                      executionContext: ExecutionContext = ExecutionContext.global,
-                     backend: SttpBackend[Future, Nothing] = OpenCageClient.defaultBackend) extends AutoCloseable {
+                     backend: SttpBackend[Future, Nothing] = OpenCageClient.defaultBackend,
+                     userAgent: String = OpenCageClient.defaultUserAgent) extends AutoCloseable {
 
   implicit val backendInUse: SttpBackend[Future, Nothing] = backend
 
@@ -63,7 +63,7 @@ class OpenCageClient(authKey: String,
 
   private def doCall(query: String, params: OpenCageClientParams): Future[OpenCageResponse] = {
     val uri = buildUri(query, params)
-    val request = sttp.get(uri)
+    val request = sttp.get(uri).header(HeaderNames.UserAgent, userAgent)
 
     val response = request.response(asJson[OpenCageResponse]).send()
 
@@ -167,6 +167,7 @@ object OpenCageClient {
   val defaultPort = 443
   val defaultHostname = "api.opencagedata.com"
   val defaultBackend = AsyncHttpClientFutureBackend()
+  val defaultUserAgent = "opencage-scala-client"
 
   object Scheme extends Enumeration {
     type Scheme = Value
