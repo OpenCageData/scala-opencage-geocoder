@@ -1,4 +1,4 @@
-name := "scala-opencage-geocodm Rer"
+name := "scala-opencage-geocoder"
 
 version := "0.1"
 scalaVersion := "2.12.4"

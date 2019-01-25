@@ -170,7 +170,7 @@ object OpenCageClient {
   val defaultPort = 443
   val defaultHostname = "api.opencagedata.com"
   val defaultBackend = AsyncHttpClientFutureBackend()
-  val defaultUserAgent = "opencage-scala-client"
+  val defaultUserAgent = "scala-opencage-geocoder"
 
   object Scheme extends Enumeration {
     type Scheme = Value
@@ -180,7 +180,7 @@ object OpenCageClient {
 }
 
 /**
- * See https://geocoder.opencagedata.com/api#forward-opt.
+ * See https://opencagedata.com/api#forward-opt.
  */
 case class OpenCageClientParams(abbreviate: Boolean = false,
                                 addRequest: Boolean = false,
