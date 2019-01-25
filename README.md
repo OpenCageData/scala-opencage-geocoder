@@ -93,7 +93,58 @@ This is particularly useful for forward geocoding to help improve your results.
 
 ## Sample application
 
-If you'd like to try the sample application included with this library, just run (e.g. forward geocoding the Brandenburg Gate):
+Below you have a code snippet of a minimal application using OpenCage client. First create a minimal project scaffolding
+by issuing `sbt new scala/scala-seed.g8`. Then place in `src/main/scala/example/` this file
+
+```scala
+package com.github.nmdguerreiro.opencage.geocoder
+
+import scala.concurrent.Await
+import scala.concurrent.duration._
+
+/**
+ * A simple sample app to show how to use the client.
+ */
+object OpenCageClientForwardDemoApp {
+  def main(args: Array[String]): Unit = {
+    val parser = new scopt.OptionParser[Config]("OpenCageClientApp") {
+      head("OpenCageClientApp", "0.1")
+
+      opt[String]('q', "query").required().action( (q, c) =>
+        c.copy(query = q) ).text("the query you want issue")
+
+      opt[String]('k', "key").required().action( (k, c) =>
+        c.copy(key = k) ).text("your authentication key")
+    }
+
+    parser.parse(args, Config()) match {
+      case Some(config) =>
+
+        val client = new OpenCageClient(config.key)
+        val responseFuture = client.forwardGeocode(config.query)
+        val response = Await.result(responseFuture, 5.seconds)
+
+        println(response)
+
+        client.close()
+      case None => System.exit(1)
+    }
+  }
+}
+
+case class Config(query: String = "", key: String = "")
+```
+
+and don't forget to add `Scopt` and `OpenCage` dependencies with desired versions to the newly created `build.sbt`
+
+```scala
+libraryDependencies ++= Seq(
+    "com.github.scopt" %% "scopt" % "X.Y.Z",
+    "com.opengage" %% "scala-opencage-geocoder" % "X.Y.Z"
+)
+```
+
+Then if you'd like to try the sample application included with this library, just run (e.g. forward geocoding the Brandenburg Gate):
 
 ```
     sbt 'run -q "Brandenburg Gate" -k <your key>'

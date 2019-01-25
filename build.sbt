@@ -1,4 +1,4 @@
-name := "scala-opencage-geocoder"
+name := "scala-opencage-geocodm Rer"
 
 version := "0.1"
 scalaVersion := "2.12.4"
@@ -18,7 +18,6 @@ libraryDependencies ++= {
     "io.circe" %% "circe-core" % circeVersion,
     "io.circe" %% "circe-generic" % circeVersion,
     "io.circe" %% "circe-generic-extras" % circeVersion,
-    "com.github.scopt" %% "scopt" % "3.7.0",
 
     "org.scalatest" %% "scalatest" % "3.0.5" % Test,
     "com.github.tomakehurst" % "wiremock" % "2.20.0" % Test,
