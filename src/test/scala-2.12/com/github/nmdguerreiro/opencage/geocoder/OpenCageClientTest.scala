@@ -96,22 +96,28 @@ class OpencageClientTest extends AsyncFlatSpec with Matchers with BeforeAndAfter
     val forwardQuery = "Branderburg Gate"
 
     val abbreviate = true
+    val addRequest = true
     val bounds = (1f, 2f, 3f, 4f)
     val countryCodes = List("gb", "de")
     val language = "en"
     val limit = 100
     val minConfidence = 10
+    val pretty = true
+    val proximity = (1f, 2f)
     val withoutAnnotations = false
     val withoutDeduplication = true
     val withoutRecord = true
 
     val params = OpenCageClientParams(
       abbreviate = abbreviate,
+      addRequest = addRequest,
       bounds = Some(bounds),
       countryCodes = countryCodes,
       language = Some(language),
       limit = Some(limit),
       minConfidence = Some(minConfidence),
+      pretty = pretty,
+      proximity = Some(proximity),
       withoutAnnotations = withoutAnnotations,
       withoutDeduplication = withoutDeduplication,
       withoutRecord = withoutRecord
@@ -136,11 +142,14 @@ class OpencageClientTest extends AsyncFlatSpec with Matchers with BeforeAndAfter
           .withQueryParam("q", equalTo(forwardQuery))
           .withQueryParam("key", equalTo(validKey))
           .withQueryParam("abbrv", equalTo("1"))
+          .withQueryParam("add_request", equalTo("1"))
           .withQueryParam("bounds", equalTo(bounds.productIterator.toList.mkString(",")))
           .withQueryParam("countrycode", equalTo(countryCodes.mkString(",")))
           .withQueryParam("language", equalTo(language))
           .withQueryParam("limit", equalTo(limit.toString))
           .withQueryParam("min_confidence", equalTo(minConfidence.toString))
+          .withQueryParam("pretty", equalTo("1"))
+          .withQueryParam("proximity", equalTo(proximity.productIterator.toList.mkString(",")))
           .withQueryParam("no_dedupe", equalTo("1"))
           .withQueryParam("no_record", equalTo("1")))
 

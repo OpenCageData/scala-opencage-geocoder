@@ -147,10 +147,13 @@ class OpenCageClient(authKey: String,
     params.language.foreach { l => extraParams += ("language" -> l) }
     params.minConfidence.foreach { m => extraParams += ("min_confidence" -> m.toString) }
     params.limit.foreach { l => extraParams += ("limit" -> l.toString) }
+    params.proximity.foreach { p => extraParams += ("proximity" -> p.productIterator.toList.mkString(",")) }
 
     if (params.countryCodes.nonEmpty) extraParams += ("countrycode" -> params.countryCodes.mkString(","))
 
     if (params.abbreviate) extraParams += ("abbrv" -> "1")
+    if (params.addRequest) extraParams += ("add_request" -> "1")
+    if (params.pretty) extraParams += ("pretty" -> "1")
     if (params.withoutAnnotations) extraParams += ("no_annotations" -> "1")
     if (params.withoutDeduplication) extraParams += ("no_dedupe" -> "1")
     if (params.withoutRecord) extraParams += ("no_record" -> "1")
@@ -180,11 +183,14 @@ object OpenCageClient {
  * See https://geocoder.opencagedata.com/api#forward-opt.
  */
 case class OpenCageClientParams(abbreviate: Boolean = false,
+                                addRequest: Boolean = false,
                                 bounds: Option[(Float, Float, Float, Float)] = None,
                                 countryCodes: List[String] = List(),
                                 language: Option[String] = None,
                                 limit: Option[Int] = None,
                                 minConfidence: Option[Int] = None,
+                                pretty : Boolean = false,
+                                proximity: Option[(Float, Float)] = None,
                                 withoutAnnotations: Boolean = true,
                                 withoutDeduplication: Boolean = false,
                                 withoutRecord: Boolean = false)
