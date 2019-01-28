@@ -3,6 +3,7 @@ package com.github.nmdguerreiro.opencage.geocoder
 import java.time.Instant
 import java.util.UUID
 
+import com.softwaremill.sttp.{HeaderNames, StatusCodes}
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
@@ -17,7 +18,7 @@ class OpencageClientTest extends AsyncFlatSpec with Matchers with BeforeAndAfter
   val host = "localhost"
 
   val requestUrl = "/geocode/v1/json"
-  val validCoords = (52.51627f, 13.37769f)
+  val validCoords: (Float, Float) = (52.51627f, 13.37769f)
   val validKey = "1234"
   val invalidKey = "2345"
 
@@ -55,7 +56,8 @@ class OpencageClientTest extends AsyncFlatSpec with Matchers with BeforeAndAfter
         verify(getRequestedFor(urlPathEqualTo(requestUrl))
           .withQueryParam("q", equalTo(reverseQuery))
           .withQueryParam("key", equalTo(validKey))
-          .withQueryParam("no_annotations", equalTo("1")))
+          .withQueryParam("no_annotations", equalTo("1"))
+          .withHeader(HeaderNames.UserAgent, equalTo("scala-opencage-geocoder")))
 
         assert(wireMockServer.findAllUnmatchedRequests().size == 0)
       }
@@ -94,22 +96,28 @@ class OpencageClientTest extends AsyncFlatSpec with Matchers with BeforeAndAfter
     val forwardQuery = "Branderburg Gate"
 
     val abbreviate = true
+    val addRequest = true
     val bounds = (1f, 2f, 3f, 4f)
     val countryCodes = List("gb", "de")
     val language = "en"
     val limit = 100
     val minConfidence = 10
+    val pretty = true
+    val proximity = (1f, 2f)
     val withoutAnnotations = false
     val withoutDeduplication = true
     val withoutRecord = true
 
     val params = OpenCageClientParams(
       abbreviate = abbreviate,
+      addRequest = addRequest,
       bounds = Some(bounds),
       countryCodes = countryCodes,
       language = Some(language),
       limit = Some(limit),
       minConfidence = Some(minConfidence),
+      pretty = pretty,
+      proximity = Some(proximity),
       withoutAnnotations = withoutAnnotations,
       withoutDeduplication = withoutDeduplication,
       withoutRecord = withoutRecord
@@ -134,11 +142,14 @@ class OpencageClientTest extends AsyncFlatSpec with Matchers with BeforeAndAfter
           .withQueryParam("q", equalTo(forwardQuery))
           .withQueryParam("key", equalTo(validKey))
           .withQueryParam("abbrv", equalTo("1"))
+          .withQueryParam("add_request", equalTo("1"))
           .withQueryParam("bounds", equalTo(bounds.productIterator.toList.mkString(",")))
           .withQueryParam("countrycode", equalTo(countryCodes.mkString(",")))
           .withQueryParam("language", equalTo(language))
           .withQueryParam("limit", equalTo(limit.toString))
           .withQueryParam("min_confidence", equalTo(minConfidence.toString))
+          .withQueryParam("pretty", equalTo("1"))
+          .withQueryParam("proximity", equalTo(proximity.productIterator.toList.mkString(",")))
           .withQueryParam("no_dedupe", equalTo("1"))
           .withQueryParam("no_record", equalTo("1")))
 
@@ -167,23 +178,23 @@ class OpencageClientTest extends AsyncFlatSpec with Matchers with BeforeAndAfter
   }
 
   it should "support invalid request errors" in {
-    genericError[InvalidRequestError]("badrequest", 400, ResponseData.invalidRequestError)
+    genericError[InvalidRequestError]("badrequest", StatusCodes.BadRequest, ResponseData.invalidRequestError)
   }
 
   it should "support quota exceeded errors" in {
-    genericError[QuotaExceededError]("quotaexceeded", 402, ResponseData.quotaExceededError)
+    genericError[QuotaExceededError]("quotaexceeded", StatusCodes.PaymentRequired, ResponseData.quotaExceededError)
   }
 
   it should "support rate limit exceeded errors" in {
-    genericError[RateLimitExceededError]("ratelimit", 429, ResponseData.rateLimitExceededError)
+    genericError[RateLimitExceededError]("ratelimit", StatusCodes.TooManyRequests, ResponseData.rateLimitExceededError)
   }
 
   it should "support timeout errors" in {
-    genericError[TimeoutError]("timeout", 408, ResponseData.timeoutError)
+    genericError[TimeoutError]("timeout", StatusCodes.RequestTimeout, ResponseData.timeoutError)
   }
 
   it should "support request too long errors" in {
-    genericError[RequestTooLongError]("timeout", 410, ResponseData.requestTooLongError)
+    genericError[RequestTooLongError]("timeout", StatusCodes.Gone, ResponseData.requestTooLongError)
   }
 
   it should "support connection errors" in {
@@ -220,15 +231,15 @@ class OpencageClientTest extends AsyncFlatSpec with Matchers with BeforeAndAfter
 
 
 object ResponseData {
-  val now = Instant.now().toEpochMilli / 1000
-  val nowFormatted = Instant.now().toString
-  val tomorrow = Instant.now().toEpochMilli / 1000 + 86400
+  val now: Long = Instant.now().toEpochMilli / 1000
+  val nowFormatted: String = Instant.now().toString
+  val tomorrow: Long = Instant.now().toEpochMilli / 1000 + 86400
 
   /**
-   * Valid response data
-   */
+    * Valid response data
+    */
 
-  val validResponseString =
+  val validResponseString: String =
     s"""
        |{
        |   "documentation" : "https://geocoder.opencagedata.com/api",
@@ -355,14 +366,14 @@ object ResponseData {
     """.stripMargin
 
   /**
-   * Errors
-   */
-  val invalidRequestError = genericErrorMessage(400, "Bad, bad request!")
-  val quotaExceededError = genericErrorMessage(402, "need more money")
-  val invalidKeyError = genericErrorMessage(403, "You shall not pass!")
-  val timeoutError = genericErrorMessage(408, "I'm all out of time")
-  val requestTooLongError = genericErrorMessage(410, "try typing less")
-  val rateLimitExceededError = genericErrorMessage(429, "hold your fire")
+    * Errors
+    */
+  val invalidRequestError: String = genericErrorMessage(StatusCodes.BadRequest, "Bad Request")
+  val quotaExceededError: String = genericErrorMessage(StatusCodes.PaymentRequired, "Payment Required")
+  val invalidKeyError: String = genericErrorMessage(StatusCodes.Forbidden, "Forbidden")
+  val timeoutError: String = genericErrorMessage(StatusCodes.RequestTimeout, "Request Timeout")
+  val requestTooLongError: String = genericErrorMessage(StatusCodes.Gone, "Gone")
+  val rateLimitExceededError: String = genericErrorMessage(StatusCodes.TooManyRequests, "Too Many Requests")
 
   private def genericErrorMessage(code: Int, message: String) = {
     s"""
