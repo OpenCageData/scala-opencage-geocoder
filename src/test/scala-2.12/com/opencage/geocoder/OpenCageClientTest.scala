@@ -1,13 +1,13 @@
-package com.github.nmdguerreiro.opencage.geocoder
+package com.opencage.geocoder
 
 import java.time.Instant
 import java.util.UUID
 
-import com.softwaremill.sttp.{HeaderNames, StatusCodes}
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
+import com.softwaremill.sttp.{HeaderNames, StatusCodes}
 import org.scalatest.{AsyncFlatSpec, BeforeAndAfter, BeforeAndAfterEach, Matchers}
 
 import scala.reflect.ClassTag

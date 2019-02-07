@@ -1,4 +1,4 @@
-package com.github.nmdguerreiro.opencage.geocoder
+package com.opencage.geocoder
 
 import java.time.Instant
 

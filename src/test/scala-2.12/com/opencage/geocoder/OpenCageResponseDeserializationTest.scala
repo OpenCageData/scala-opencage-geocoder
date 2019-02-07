@@ -1,8 +1,8 @@
-package com.github.nmdguerreiro.opencage.geocoder
+package com.opencage.geocoder
 
 import java.time.Instant
 
-import com.github.nmdguerreiro.opencage.geocoder.parts._
+import com.opencage.geocoder.parts._
 import io.circe.parser._
 import org.scalatest.{FlatSpec, Matchers}
 
