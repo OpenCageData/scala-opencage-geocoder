@@ -188,6 +188,10 @@ Or by specifying options, such as a connection timeout or proxy by using custom 
 
 Finally, you can also implement your own `sttp` backend, as long as it's asynchronous.
 
+### Author
+
+This code was originally written by [Nuno Guerreiro](https://github.com/nmdguerreiro/) who later transfered it to the OpenCage organisation. Thank you Nuno!
+
 License
 -------
 
