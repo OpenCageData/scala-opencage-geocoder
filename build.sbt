@@ -1,10 +1,8 @@
 name := "scala-opencage-geocoder"
+organization := "com.opencagedata"
+version := "1.0.0"
 
-version := "0.1"
-scalaVersion := "2.12.4"
-
-mainClass in(Compile, packageBin) := Some("com.github.nmdguerreiro.opencage.geocoder.OpenCageClientForwardDemoApp")
-mainClass in(Compile, run) := Some("com.github.nmdguerreiro.opencage.geocoder.OpenCageClientForwardDemoApp")
+scalaVersion := "2.12.8"
 
 scalacOptions += "-feature"
 
@@ -24,5 +22,9 @@ libraryDependencies ++= {
     "org.apache.commons" % "commons-lang3" % "3.7" % Test
   )
 }
+
+publishTo := sonatypePublishTo.value
+
+credentials += Credentials(Path.userHome / ".sbt" / "opencage_sonatype_credentials")
 
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)

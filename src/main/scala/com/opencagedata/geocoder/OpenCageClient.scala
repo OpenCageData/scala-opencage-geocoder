@@ -1,6 +1,6 @@
-package com.github.nmdguerreiro.opencage.geocoder
+package com.opencagedata.geocoder
 
-import com.github.nmdguerreiro.opencage.geocoder.OpenCageClient.Scheme.Scheme
+import com.opencagedata.geocoder.OpenCageClient.Scheme.Scheme
 import com.softwaremill.sttp._
 import com.softwaremill.sttp.asynchttpclient.future.AsyncHttpClientFutureBackend
 import com.softwaremill.sttp.circe._
@@ -18,7 +18,7 @@ import scala.util.{Failure, Success, Try}
  *
  * @param authKey The auth key provided to you by OpenCage
  * @param scheme http/https
- * @param hostname Defaults to com.github.nmdguerreiro.opencage.geocoder.OpenCageClient#defaultHostname(), but can be
+ * @param hostname Defaults to com.opencagedata.geocoder.OpenCageClient#defaultHostname(), but can be
   *                 overridden for testing purposes
  * @param backend The AHC backend is used by default. If you need to configure proxies, timeouts, connection pools,
  *                etc, you can do that yourself, by providing a custom backend. That can easily be done
@@ -41,7 +41,7 @@ class OpenCageClient(authKey: String,
    * Reverse geocodes a position (i.e. converts a latitude/longitude to a set of identifiers and codes that represent that position).
    * @param lat latitude
    * @param lng longitude
-   * @param params Allows you to specify additional parameters to the call. @see com.github.nmdguerreiro.opencage.geocoder.OpenCageClientParams
+   * @param params Allows you to specify additional parameters to the call. @see com.opencagedata.geocoder.OpenCageClientParams
    * @return all the information available for that position, including some metadata regarding the execution of the request
    */
   def reverseGeocode(lat: Float,
@@ -53,7 +53,7 @@ class OpenCageClient(authKey: String,
   /**
    * Forward geocodes an address (i.e. converts a textual address to a set of positions and returns information about those positions).
    * @param placeOrAddress place or address to lookup (e.g. Branderburg Gate)
-   * @param params Allows you to specify additional parameters to the call. @see com.github.nmdguerreiro.opencage.geocoder.OpenCageClientParams
+   * @param params Allows you to specify additional parameters to the call. @see com.opencagedata.geocoder.OpenCageClientParams
    * @return all the information available for the positions that match the address, including some metadata regarding the execution of the request
    */
   def forwardGeocode(placeOrAddress: String,

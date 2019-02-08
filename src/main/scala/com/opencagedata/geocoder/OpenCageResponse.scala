@@ -1,6 +1,6 @@
-package com.github.nmdguerreiro.opencage.geocoder
+package com.opencagedata.geocoder
 
-import com.github.nmdguerreiro.opencage.geocoder.parts._
+import com.opencagedata.geocoder.parts._
 import io.circe.generic.extras.ConfiguredJsonCodec
 
 /**
