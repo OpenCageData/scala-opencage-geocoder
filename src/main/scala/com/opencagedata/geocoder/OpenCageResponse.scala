@@ -1,6 +1,6 @@
-package com.opencage.geocoder
+package com.opencagedata.geocoder
 
-import com.opencage.geocoder.parts._
+import com.opencagedata.geocoder.parts._
 import io.circe.generic.extras.ConfiguredJsonCodec
 
 /**

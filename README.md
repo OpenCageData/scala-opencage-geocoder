@@ -140,7 +140,7 @@ and don't forget to add `Scopt` and `OpenCage` dependencies with desired version
 ```scala
 libraryDependencies ++= Seq(
     "com.github.scopt" %% "scopt" % "X.Y.Z",
-    "com.opengage" %% "scala-opencage-geocoder" % "X.Y.Z"
+    "com.opengagedata" %% "scala-opencage-geocoder" % "X.Y.Z"
 )
 ```
 
@@ -187,6 +187,32 @@ Or by specifying options, such as a connection timeout or proxy by using custom 
 ```
 
 Finally, you can also implement your own `sttp` backend, as long as it's asynchronous.
+
+## Publishing (only of interest for developers of this library)
+
+Make sure you have your file keys `pubring.asc` and `secring.asc` in `~/.sbt/gpg/`. 
+
+If those files are a new pair of key files, you have to publish to Sonatype's keyserver with 
+`sbt  pgp-cmd <key id> hkp://pool.sks-keyservers.net`
+
+Then just follow standard procedure [using sbt-sonatype plugin](https://www.scala-sbt.org/1.x/docs/Using-Sonatype.html#sbt-sonatype). 
+Remember to create file `~/.sbt/opencage_sonatype_credentials` with contents
+
+```
+realm=Sonatype Nexus Repository Manager
+host=oss.sonatype.org
+user=<Sonatype username>
+password=<Sonatype password>
+```
+
+Then from the console issue
+
+```bash
+$ sbt
+sbt:scala-opencage-geocoder> sonatypeOpen com.opencagedata "Staging repo"
+sbt:scala-opencage-geocoder> publishSigned
+sbt:scala-opencage-geocoder> sonatypeRelease
+```
 
 ### Author
 

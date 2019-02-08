@@ -1,4 +1,4 @@
-package com.opencage.geocoder
+package com.opencagedata.geocoder
 
 import java.time.Instant
 import java.util.UUID
