@@ -6,9 +6,9 @@ import com.softwaremill.sttp.asynchttpclient.future.AsyncHttpClientFutureBackend
 import com.softwaremill.sttp.circe._
 import io.circe.parser._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.language.postfixOps
-import scala.util.{Failure, Success, Try}
+import scala.util.{ Failure, Success, Try }
 
 /**
  * Creates a new client for the OpenCage forward and reverse geocoders.
@@ -19,7 +19,7 @@ import scala.util.{Failure, Success, Try}
  * @param authKey The auth key provided to you by OpenCage
  * @param scheme http/https
  * @param hostname Defaults to com.opencagedata.geocoder.OpenCageClient#defaultHostname(), but can be
-  *                 overridden for testing purposes
+ *                 overridden for testing purposes
  * @param backend The AHC backend is used by default. If you need to configure proxies, timeouts, connection pools,
  *                etc, you can do that yourself, by providing a custom backend. That can easily be done
  *                by calling com.softwaremill.sttp.asynchttpclient.future.AsyncHttpClientFutureBackend#apply(com.softwaremill.sttp.SttpBackendOptions,
@@ -27,13 +27,15 @@ import scala.util.{Failure, Success, Try}
  *                (com.softwaremill.sttp.asynchttpclient.future.AsyncHttpClientFutureBackend#usingConfig(org.asynchttpclient.AsyncHttpClientConfig,
  *                scala.concurrent.ExecutionContext)) before calling this constructor.
  */
-class OpenCageClient(authKey: String,
-                     scheme: Scheme = OpenCageClient.defaultScheme,
-                     hostname: String = OpenCageClient.defaultHostname,
-                     port: Int = OpenCageClient.defaultPort,
-                     executionContext: ExecutionContext = ExecutionContext.global,
-                     backend: SttpBackend[Future, Nothing] = OpenCageClient.defaultBackend,
-                     userAgent: String = OpenCageClient.defaultUserAgent) extends AutoCloseable {
+class OpenCageClient(
+  authKey:          String,
+  scheme:           Scheme                       = OpenCageClient.defaultScheme,
+  hostname:         String                       = OpenCageClient.defaultHostname,
+  port:             Int                          = OpenCageClient.defaultPort,
+  executionContext: ExecutionContext             = ExecutionContext.global,
+  backend:          SttpBackend[Future, Nothing] = OpenCageClient.defaultBackend,
+  userAgent:        String                       = OpenCageClient.defaultUserAgent
+) extends AutoCloseable {
 
   implicit val backendInUse: SttpBackend[Future, Nothing] = backend
 
@@ -44,9 +46,11 @@ class OpenCageClient(authKey: String,
    * @param params Allows you to specify additional parameters to the call. @see com.opencagedata.geocoder.OpenCageClientParams
    * @return all the information available for that position, including some metadata regarding the execution of the request
    */
-  def reverseGeocode(lat: Float,
-                     lng: Float,
-                     params: OpenCageClientParams = OpenCageClientParams()): Future[OpenCageResponse] = {
+  def reverseGeocode(
+    lat:    Float,
+    lng:    Float,
+    params: OpenCageClientParams = OpenCageClientParams()
+  ): Future[OpenCageResponse] = {
     doCall(s"$lat,$lng", params)
   }
 
@@ -56,8 +60,10 @@ class OpenCageClient(authKey: String,
    * @param params Allows you to specify additional parameters to the call. @see com.opencagedata.geocoder.OpenCageClientParams
    * @return all the information available for the positions that match the address, including some metadata regarding the execution of the request
    */
-  def forwardGeocode(placeOrAddress: String,
-                     params: OpenCageClientParams = OpenCageClientParams()): Future[OpenCageResponse] = {
+  def forwardGeocode(
+    placeOrAddress: String,
+    params:         OpenCageClientParams = OpenCageClientParams()
+  ): Future[OpenCageResponse] = {
     doCall(placeOrAddress, params)
   }
 
@@ -67,23 +73,10 @@ class OpenCageClient(authKey: String,
 
     val response = request.response(asJson[OpenCageResponse]).send()
 
-    response.transform {
-      case Success(res) => handleHttpRequestSuccess(res)
-      case Failure(ex) => Failure(new UnexpectedError(s"Unexpected error: ${ex}.", ex))
-    }(executionContext)
-  }
-
-  private def buildUri(query: String, withAnnotations: Boolean): Uri = {
-
-    val uri = uri"${scheme.toString}://$hostname:$port/geocode/v1/json".params(
-      Map(
-        "q" -> query,
-        "key" -> authKey
-      )
-    )
-
-    val finalUri = if (withAnnotations) uri else uri.param("no_annotations", "1")
-    finalUri
+    /* Originally as a Scala 2.12 Future.transform we do this convolution to be able to cross compile to 2.11 also */
+    response.map(handleHttpRequestSuccess)(executionContext)
+      .recover { case ex => throw new UnexpectedError(s"Unexpected error: $ex.", ex) }(executionContext)
+      .map(_.get)(executionContext)
   }
 
   /**
@@ -94,7 +87,6 @@ class OpenCageClient(authKey: String,
     backend.close()
   }
 
-
   /**
    * Handles the response from the server. The OpenCage server is expected to answer with a valid payload even in case of a client/server error.
    * Note that there's a difference between an HTTP request succeeding and having a success response code.
@@ -103,32 +95,31 @@ class OpenCageClient(authKey: String,
   private def handleHttpRequestSuccess(httpResponse: Response[Either[io.circe.Error, OpenCageResponse]]): Try[OpenCageResponse] = {
     def handleErrorResponse(errorResponse: OpenCageResponse) = {
       httpResponse.code match {
-        case StatusCodes.BadRequest => Failure(new InvalidRequestError(s"Invalid request: ${errorResponse.status.message}"))
+        case StatusCodes.BadRequest      => Failure(new InvalidRequestError(s"Invalid request: ${errorResponse.status.message}"))
         case StatusCodes.PaymentRequired => Failure(new QuotaExceededError(s"Quota exceeded: ${errorResponse.status.message}"))
-        case StatusCodes.Forbidden => Failure(new ForbiddenError(s"Forbidden: ${errorResponse.status.message}"))
-        case StatusCodes.RequestTimeout => Failure(new TimeoutError(s"Timeout: ${errorResponse.status.message}"))
-        case StatusCodes.Gone => Failure(new RequestTooLongError(s"Request too long: ${errorResponse.status.message}"))
+        case StatusCodes.Forbidden       => Failure(new ForbiddenError(s"Forbidden: ${errorResponse.status.message}"))
+        case StatusCodes.RequestTimeout  => Failure(new TimeoutError(s"Timeout: ${errorResponse.status.message}"))
+        case StatusCodes.Gone            => Failure(new RequestTooLongError(s"Request too long: ${errorResponse.status.message}"))
         case StatusCodes.TooManyRequests => Failure(new RateLimitExceededError(
-          s"Request too long: ${errorResponse.status.message}", errorResponse.rate.map(_.reset)))
+          s"Request too long: ${errorResponse.status.message}", errorResponse.rate.map(_.reset)
+        ))
         case _ => Failure(new UnexpectedError(s"Unexpected error: ${errorResponse.status.message}"))
       }
     }
 
     httpResponse.body match {
-      case Left(rawResp) => {
+      case Left(rawResp) =>
         // sttp sadly doesn't deserialize error responses, so we'll have to try it ourselves
         decode[OpenCageResponse](rawResp) match {
-          case Left(err) => Failure(new DeserializationError(s"Failed to deserialize the response from the OpenCage server: $rawResp", err))
+          case Left(err)            => Failure(new DeserializationError(s"Failed to deserialize the response from the OpenCage server: $rawResp", err))
           case Right(errorResponse) => handleErrorResponse(errorResponse)
         }
-      }
-      case Right(eitherErrorOrResponse) => {
+      case Right(eitherErrorOrResponse) =>
         // We got a 200 OK, but we need to see if we were actually able to deserialize it
         eitherErrorOrResponse match {
-          case Left(err) => Failure(new DeserializationError("Failed to deserialize the response from the OpenCage server", err))
+          case Left(err)             => Failure(new DeserializationError("Failed to deserialize the response from the OpenCage server", err))
           case Right(parsedResponse) => Success(parsedResponse)
         }
-      }
     }
   }
 
@@ -166,7 +157,7 @@ class OpenCageClient(authKey: String,
  * Contains default configuration values that can be overridden.
  */
 object OpenCageClient {
-  val defaultScheme = Scheme.https
+  val defaultScheme: OpenCageClient.Scheme.Value = Scheme.https
   val defaultPort = 443
   val defaultHostname = "api.opencagedata.com"
   val defaultBackend = AsyncHttpClientFutureBackend()
@@ -182,15 +173,17 @@ object OpenCageClient {
 /**
  * See https://opencagedata.com/api#forward-opt.
  */
-case class OpenCageClientParams(abbreviate: Boolean = false,
-                                addRequest: Boolean = false,
-                                bounds: Option[(Float, Float, Float, Float)] = None,
-                                countryCodes: List[String] = List(),
-                                language: Option[String] = None,
-                                limit: Option[Int] = None,
-                                minConfidence: Option[Int] = None,
-                                pretty : Boolean = false,
-                                proximity: Option[(Float, Float)] = None,
-                                withoutAnnotations: Boolean = true,
-                                withoutDeduplication: Boolean = false,
-                                withoutRecord: Boolean = false)
+case class OpenCageClientParams(
+  abbreviate:           Boolean                              = false,
+  addRequest:           Boolean                              = false,
+  bounds:               Option[(Float, Float, Float, Float)] = None,
+  countryCodes:         List[String]                         = List(),
+  language:             Option[String]                       = None,
+  limit:                Option[Int]                          = None,
+  minConfidence:        Option[Int]                          = None,
+  pretty:               Boolean                              = false,
+  proximity:            Option[(Float, Float)]               = None,
+  withoutAnnotations:   Boolean                              = true,
+  withoutDeduplication: Boolean                              = false,
+  withoutRecord:        Boolean                              = false
+)

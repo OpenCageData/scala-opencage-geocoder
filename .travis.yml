@@ -1,6 +1,7 @@
 language: scala
 scala:
- - 2.12.4
+ - 2.12.8
+ - 2.11.8
 script:
  - sbt ++$TRAVIS_SCALA_VERSION coverage test
 jdk:
