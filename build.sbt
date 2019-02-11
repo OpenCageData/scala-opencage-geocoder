@@ -1,6 +1,6 @@
 name := "scala-opencage-geocoder"
 organization := "com.opencagedata"
-version := "1.0.0"
+version := "1.1.0"
 
 lazy val scala_2_12 = "2.12.8"
 lazy val scala_2_11 = "2.11.8"
