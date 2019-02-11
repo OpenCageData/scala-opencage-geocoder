@@ -4,7 +4,7 @@ import java.time.Instant
 
 import com.opencagedata.geocoder.parts._
 import io.circe.parser._
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.{ FlatSpec, Matchers }
 
 /**
  * Validates that all attributes are deserialized correctly.
@@ -286,8 +286,10 @@ object DeserializationsResponseData {
     mgrs = Some("33UUU8991719699"),
     maidenhead = Some("JO62qm53hv"),
     mercator = Some(MercatorProjection(1489199.031f, 6860089.217f)),
-    osm = Some(OSM("https://www.openstreetmap.org/edit?way=518071791#map=17/52.51628/13.37770",
-      "https://www.openstreetmap.org/?mlat=52.51628&mlon=13.37770#map=17/52.51628/13.37770")),
+    osm = Some(OSM(
+      "https://www.openstreetmap.org/edit?way=518071791#map=17/52.51628/13.37770",
+      "https://www.openstreetmap.org/?mlat=52.51628&mlon=13.37770#map=17/52.51628/13.37770"
+    )),
     currency = Some(Currency(
       alternateSymbols = Some(List()),
       decimalMark = Some(","),
@@ -300,14 +302,16 @@ object DeserializationsResponseData {
       subunitToUnit = Some(100),
       symbol = Some("\u20ac"),
       symbolFirst = Some(1),
-      thousandsSeparator = Some("."))),
+      thousandsSeparator = Some(".")
+    )),
     flag = Some("\ud83c\udde9\ud83c\uddea"),
     callingCode = Some(49),
     geohash = Some("u33db2m37p9bznzem3pq"),
     qibla = Some(136.64f),
     sun = Some(Sun(
       rise = SunTimings(Instant.ofEpochSecond(now), Instant.ofEpochSecond(now), Instant.ofEpochSecond(now), Instant.ofEpochSecond(now)),
-      set = SunTimings(Instant.ofEpochSecond(now), Instant.ofEpochSecond(now), Instant.ofEpochSecond(now), Instant.ofEpochSecond(now)))),
+      set = SunTimings(Instant.ofEpochSecond(now), Instant.ofEpochSecond(now), Instant.ofEpochSecond(now), Instant.ofEpochSecond(now))
+    )),
     timezone = Some(Timezone("Europe/Berlin", false, 3600, 100, "CET")),
     what3Words = Some(What3Words("glosses.hood.bags")),
     wikidata = Some("Q82425")

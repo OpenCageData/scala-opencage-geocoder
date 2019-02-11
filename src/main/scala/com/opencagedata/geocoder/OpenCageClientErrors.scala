@@ -2,8 +2,10 @@ package com.opencagedata.geocoder
 
 import java.time.Instant
 
-sealed class OpencageClientError(message: String,
-                                 cause: Throwable = None.orNull) extends Exception(message, cause)
+sealed class OpencageClientError(
+  message: String,
+  cause:   Throwable = None.orNull
+) extends Exception(message, cause)
 
 /**
  * Represents an error while trying to deserialize the response from the server
@@ -16,8 +18,10 @@ class DeserializationError(message: String, cause: io.circe.Error) extends Openc
  * @param message error message
  * @param cause cause
  */
-class UnexpectedError(message: String,
-                      cause: Throwable = None.orNull) extends OpencageClientError(message, cause)
+class UnexpectedError(
+  message: String,
+  cause:   Throwable = None.orNull
+) extends OpencageClientError(message, cause)
 
 /**
  * Thrown when an invalid request is made
@@ -39,8 +43,10 @@ class QuotaExceededError(message: String) extends OpencageClientError(message)
  * @param message error message
  * @param tryAgainAt instant at which you could try issuing the request again
  */
-class RateLimitExceededError(message: String,
-                             tryAgainAt: Option[Instant]) extends OpencageClientError(message)
+class RateLimitExceededError(
+  message:    String,
+  tryAgainAt: Option[Instant]
+) extends OpencageClientError(message)
 
 /**
  * Thrown when the server issues a timeout

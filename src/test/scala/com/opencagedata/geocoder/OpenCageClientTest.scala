@@ -7,14 +7,15 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
-import com.softwaremill.sttp.{HeaderNames, StatusCodes}
-import org.scalatest.{AsyncFlatSpec, BeforeAndAfter, BeforeAndAfterEach, Matchers}
+import com.softwaremill.sttp.{ HeaderNames, StatusCodes }
+import org.scalatest.{ AsyncFlatSpec, BeforeAndAfter, BeforeAndAfterEach, Matchers }
 
 import scala.reflect.ClassTag
 
 class OpencageClientTest extends AsyncFlatSpec with Matchers with BeforeAndAfterEach with BeforeAndAfter {
 
-  val wireMockServer = new WireMockServer(wireMockConfig().dynamicPort())
+  val TEST_PORT = 5555
+  val wireMockServer = new WireMockServer(wireMockConfig().port(TEST_PORT))
   val host = "localhost"
 
   val requestUrl = "/geocode/v1/json"
@@ -38,57 +39,65 @@ class OpencageClientTest extends AsyncFlatSpec with Matchers with BeforeAndAfter
   "Reverse geocoder" should "make a call with the default parameters" in {
     val reverseQuery = s"${validCoords._1},${validCoords._2}"
 
-    val client = new OpenCageClient(validKey,
+    val client = new OpenCageClient(
+      validKey,
       hostname = host,
       scheme = OpenCageClient.Scheme.http,
-      port = wireMockServer.port())
+      port = wireMockServer.port()
+    )
 
     stubFor(get(urlPathEqualTo(requestUrl))
       .willReturn(
         aResponse()
           .withStatus(200)
-          .withBody(ResponseData.validResponseString)))
+          .withBody(ResponseData.validResponseString)
+      ))
 
     val respFuture = client.reverseGeocode(validCoords._1, validCoords._2)
 
     respFuture map {
-      resp: OpenCageResponse => {
-        verify(getRequestedFor(urlPathEqualTo(requestUrl))
-          .withQueryParam("q", equalTo(reverseQuery))
-          .withQueryParam("key", equalTo(validKey))
-          .withQueryParam("no_annotations", equalTo("1"))
-          .withHeader(HeaderNames.UserAgent, equalTo("scala-opencage-geocoder")))
+      resp: OpenCageResponse =>
+        {
+          verify(getRequestedFor(urlPathEqualTo(requestUrl))
+            .withQueryParam("q", equalTo(reverseQuery))
+            .withQueryParam("key", equalTo(validKey))
+            .withQueryParam("no_annotations", equalTo("1"))
+            .withHeader(HeaderNames.UserAgent, equalTo("scala-opencage-geocoder")))
 
-        assert(wireMockServer.findAllUnmatchedRequests().size == 0)
-      }
+          assert(wireMockServer.findAllUnmatchedRequests().size == 0)
+        }
     }
   }
 
   "Forward geocoder" should "make a call with the default parameters" in {
     val forwardQuery = "Branderburg Gate"
 
-    val client = new OpenCageClient(validKey,
+    val client = new OpenCageClient(
+      validKey,
       hostname = host,
       scheme = OpenCageClient.Scheme.http,
-      port = wireMockServer.port())
+      port = wireMockServer.port()
+    )
 
     stubFor(get(urlPathEqualTo(requestUrl))
       .willReturn(
         aResponse()
           .withStatus(200)
-          .withBody(ResponseData.validResponseString)))
+          .withBody(ResponseData.validResponseString)
+      ))
 
     val respFuture = client.forwardGeocode(forwardQuery)
 
     respFuture map {
-      resp: OpenCageResponse => {
-        verify(getRequestedFor(urlPathEqualTo(requestUrl))
-          .withQueryParam("q", equalTo(s"$forwardQuery"))
-          .withQueryParam("key", equalTo(validKey))
-          .withQueryParam("no_annotations", equalTo("1")))
+      resp: OpenCageResponse =>
+        {
+          verify(getRequestedFor(urlPathEqualTo(requestUrl))
+            .withQueryParam("q", equalTo(s"$forwardQuery"))
+            .withQueryParam("key", equalTo(validKey))
+            .withQueryParam("no_annotations", equalTo("1")))
 
-        assert(wireMockServer.findAllUnmatchedRequests().size == 0)
-      }
+          assert(wireMockServer.findAllUnmatchedRequests().size == 0)
+        }
     }
   }
 
@@ -123,46 +132,52 @@ class OpencageClientTest extends AsyncFlatSpec with Matchers with BeforeAndAfter
       withoutRecord = withoutRecord
     )
 
-    val client = new OpenCageClient(validKey,
+    val client = new OpenCageClient(
+      validKey,
       hostname = host,
       scheme = OpenCageClient.Scheme.http,
-      port = wireMockServer.port())
+      port = wireMockServer.port()
+    )
 
     stubFor(get(urlPathEqualTo(requestUrl))
       .willReturn(
         aResponse()
           .withStatus(200)
-          .withBody(ResponseData.validResponseString)))
+          .withBody(ResponseData.validResponseString)
+      ))
 
     val respFuture = client.forwardGeocode(forwardQuery, params)
 
     respFuture map {
-      resp: OpenCageResponse => {
-        verify(getRequestedFor(urlPathEqualTo(requestUrl))
-          .withQueryParam("q", equalTo(forwardQuery))
-          .withQueryParam("key", equalTo(validKey))
-          .withQueryParam("abbrv", equalTo("1"))
-          .withQueryParam("add_request", equalTo("1"))
-          .withQueryParam("bounds", equalTo(bounds.productIterator.toList.mkString(",")))
-          .withQueryParam("countrycode", equalTo(countryCodes.mkString(",")))
-          .withQueryParam("language", equalTo(language))
-          .withQueryParam("limit", equalTo(limit.toString))
-          .withQueryParam("min_confidence", equalTo(minConfidence.toString))
-          .withQueryParam("pretty", equalTo("1"))
-          .withQueryParam("proximity", equalTo(proximity.productIterator.toList.mkString(",")))
-          .withQueryParam("no_dedupe", equalTo("1"))
-          .withQueryParam("no_record", equalTo("1")))
+      resp: OpenCageResponse =>
+        {
+          verify(getRequestedFor(urlPathEqualTo(requestUrl))
+            .withQueryParam("q", equalTo(forwardQuery))
+            .withQueryParam("key", equalTo(validKey))
+            .withQueryParam("abbrv", equalTo("1"))
+            .withQueryParam("add_request", equalTo("1"))
+            .withQueryParam("bounds", equalTo(bounds.productIterator.toList.mkString(",")))
+            .withQueryParam("countrycode", equalTo(countryCodes.mkString(",")))
+            .withQueryParam("language", equalTo(language))
+            .withQueryParam("limit", equalTo(limit.toString))
+            .withQueryParam("min_confidence", equalTo(minConfidence.toString))
+            .withQueryParam("pretty", equalTo("1"))
+            .withQueryParam("proximity", equalTo(proximity.productIterator.toList.mkString(",")))
+            .withQueryParam("no_dedupe", equalTo("1"))
+            .withQueryParam("no_record", equalTo("1")))
 
-        assert(wireMockServer.findAllUnmatchedRequests().size == 0)
-      }
+          assert(wireMockServer.findAllUnmatchedRequests().size == 0)
+        }
     }
   }
 
   "Error handling" should "support invalid key errors" in {
-    val client = new OpenCageClient(invalidKey,
+    val client = new OpenCageClient(
+      invalidKey,
       hostname = host,
       scheme = OpenCageClient.Scheme.http,
-      port = wireMockServer.port())
+      port = wireMockServer.port()
+    )
 
     val requestUrl = s"/geocode/v1/json?q=${validCoords._1},${validCoords._2}&key=$invalidKey&no_annotations=1"
 
@@ -170,7 +185,8 @@ class OpencageClientTest extends AsyncFlatSpec with Matchers with BeforeAndAfter
       .willReturn(
         aResponse()
           .withStatus(403)
-          .withBody(ResponseData.invalidKeyError)))
+          .withBody(ResponseData.invalidKeyError)
+      ))
 
     recoverToSucceededIf[ForbiddenError] {
       client.reverseGeocode(validCoords._1, validCoords._2)
@@ -198,22 +214,25 @@ class OpencageClientTest extends AsyncFlatSpec with Matchers with BeforeAndAfter
   }
 
   it should "support connection errors" in {
-    val client = new OpenCageClient(validKey,
+    val client = new OpenCageClient(
+      validKey,
       hostname = "some-random-host" + UUID.randomUUID().toString,
       scheme = OpenCageClient.Scheme.http,
-      port = wireMockServer.port())
+      port = wireMockServer.port()
+    )
 
     recoverToSucceededIf[OpencageClientError] {
       client.forwardGeocode("someinvaliddata")
     }
   }
 
-  private def genericError[T <: OpencageClientError](errorPath: String, errorCode: Int, responseBody: String)
-                                                    (implicit classTag: ClassTag[T]) = {
-    val client = new OpenCageClient(validKey,
+  private def genericError[T <: OpencageClientError](errorPath: String, errorCode: Int, responseBody: String)(implicit classTag: ClassTag[T]) = {
+    val client = new OpenCageClient(
+      validKey,
       hostname = host,
       scheme = OpenCageClient.Scheme.http,
-      port = wireMockServer.port())
+      port = wireMockServer.port()
+    )
 
     val requestUrl = s"/geocode/v1/json?q=$errorPath&key=$validKey&no_annotations=1"
 
@@ -221,7 +240,8 @@ class OpencageClientTest extends AsyncFlatSpec with Matchers with BeforeAndAfter
       .willReturn(
         aResponse()
           .withStatus(errorCode)
-          .withBody(responseBody)))
+          .withBody(responseBody)
+      ))
 
     recoverToSucceededIf[T] {
       client.forwardGeocode(errorPath)
@@ -229,15 +249,14 @@ class OpencageClientTest extends AsyncFlatSpec with Matchers with BeforeAndAfter
   }
 }
 
-
 object ResponseData {
   val now: Long = Instant.now().toEpochMilli / 1000
   val nowFormatted: String = Instant.now().toString
   val tomorrow: Long = Instant.now().toEpochMilli / 1000 + 86400
 
   /**
-    * Valid response data
-    */
+   * Valid response data
+   */
 
   val validResponseString: String =
     s"""
@@ -366,8 +385,8 @@ object ResponseData {
     """.stripMargin
 
   /**
-    * Errors
-    */
+   * Errors
+   */
   val invalidRequestError: String = genericErrorMessage(StatusCodes.BadRequest, "Bad Request")
   val quotaExceededError: String = genericErrorMessage(StatusCodes.PaymentRequired, "Payment Required")
   val invalidKeyError: String = genericErrorMessage(StatusCodes.Forbidden, "Forbidden")
@@ -409,5 +428,4 @@ object ResponseData {
   }
 
 }
-
 
