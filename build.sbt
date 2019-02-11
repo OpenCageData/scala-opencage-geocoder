@@ -9,22 +9,29 @@ crossScalaVersions := List(scala_2_11, scala_2_12)
 
 scalacOptions += "-feature"
 
-libraryDependencies ++= {
-  val circeVersion = "0.11.0"
-  val sttpVersion = "1.2.3"
-  Seq(
-    "com.softwaremill.sttp" %% "core" % sttpVersion,
-    "com.softwaremill.sttp" %% "async-http-client-backend-future" % sttpVersion,
-    "com.softwaremill.sttp" %% "circe" % sttpVersion,
-    "io.circe" %% "circe-core" % circeVersion,
-    "io.circe" %% "circe-generic" % circeVersion,
-    "io.circe" %% "circe-generic-extras" % circeVersion,
+IntegrationTest / parallelExecution := false
 
-    "org.scalatest" %% "scalatest" % "3.0.5" % Test,
-    "com.github.tomakehurst" % "wiremock" % "2.20.0" % Test,
-    "org.apache.commons" % "commons-lang3" % "3.7" % Test
+lazy val root = (project in file("."))
+  .configs(IntegrationTest)
+  .settings(
+    Defaults.itSettings,
+    libraryDependencies ++= {
+      val circeVersion = "0.11.0"
+      val sttpVersion = "1.2.3"
+      Seq(
+        "com.softwaremill.sttp" %% "core" % sttpVersion,
+        "com.softwaremill.sttp" %% "async-http-client-backend-future" % sttpVersion,
+        "com.softwaremill.sttp" %% "circe" % sttpVersion,
+        "io.circe" %% "circe-core" % circeVersion,
+        "io.circe" %% "circe-generic" % circeVersion,
+        "io.circe" %% "circe-generic-extras" % circeVersion,
+
+        "org.scalatest" %% "scalatest" % "3.0.5" % "test,it",
+        "com.github.tomakehurst" % "wiremock" % "2.20.0" % IntegrationTest,
+        "org.apache.commons" % "commons-lang3" % "3.7" % Test
+      )
+    }
   )
-}
 
 publishTo := sonatypePublishTo.value
 

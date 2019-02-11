@@ -7,8 +7,8 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
-import com.softwaremill.sttp.{ HeaderNames, StatusCodes }
-import org.scalatest.{ AsyncFlatSpec, BeforeAndAfter, BeforeAndAfterEach, Matchers }
+import com.softwaremill.sttp.{HeaderNames, StatusCodes}
+import org.scalatest.{AsyncFlatSpec, BeforeAndAfter, BeforeAndAfterEach, Matchers}
 
 import scala.reflect.ClassTag
 
