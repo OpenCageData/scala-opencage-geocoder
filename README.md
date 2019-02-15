@@ -209,8 +209,7 @@ Then from the console issue
 
 ```bash
 $ sbt
-sbt:scala-opencage-geocoder> sonatypeOpen com.opencagedata "Staging repo"
-sbt:scala-opencage-geocoder> publishSigned
+sbt:scala-opencage-geocoder> +publishSigned
 sbt:scala-opencage-geocoder> sonatypeRelease
 ```
 
