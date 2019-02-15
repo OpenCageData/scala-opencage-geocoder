@@ -3,6 +3,6 @@ scala:
  - 2.12.8
  - 2.11.8
 script:
- - sbt ++$TRAVIS_SCALA_VERSION coverage test it:test
+ - sbt ++$TRAVIS_SCALA_VERSION coverage test
 jdk:
  - oraclejdk8
