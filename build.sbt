@@ -1,6 +1,6 @@
 name := "scala-opencage-geocoder"
 organization := "com.opencagedata"
-version := "1.1.0"
+version := "1.1.1"
 
 lazy val scala_2_12 = "2.12.8"
 lazy val scala_2_11 = "2.11.8"
@@ -27,8 +27,8 @@ lazy val root = (project in file("."))
         "io.circe" %% "circe-generic-extras" % circeVersion,
 
         "org.scalatest" %% "scalatest" % "3.0.5" % "test,it",
-        "com.github.tomakehurst" % "wiremock" % "2.20.0" % IntegrationTest,
-        "org.apache.commons" % "commons-lang3" % "3.7" % Test
+        "com.github.tomakehurst" % "wiremock" % "2.20.0" % "test,it",
+        "org.apache.commons" % "commons-lang3" % "3.7" % "test"
       )
     }
   )
