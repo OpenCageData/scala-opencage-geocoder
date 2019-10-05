@@ -223,7 +223,7 @@ object DeserializationsResponseData {
        |               "name" : "Europe/Berlin",
        |               "now_in_dst" : 0,
        |               "offset_sec" : 3600,
-       |               "offset_string" : 100,
+       |               "offset_string" : "100",
        |               "short_name" : "CET"
        |            },
        |            "what3words" : {
@@ -312,7 +312,7 @@ object DeserializationsResponseData {
       rise = SunTimings(Instant.ofEpochSecond(now), Instant.ofEpochSecond(now), Instant.ofEpochSecond(now), Instant.ofEpochSecond(now)),
       set = SunTimings(Instant.ofEpochSecond(now), Instant.ofEpochSecond(now), Instant.ofEpochSecond(now), Instant.ofEpochSecond(now))
     )),
-    timezone = Some(Timezone("Europe/Berlin", false, 3600, 100, "CET")),
+    timezone = Some(Timezone("Europe/Berlin", false, 3600, "100", "CET")),
     what3Words = Some(What3Words("glosses.hood.bags")),
     wikidata = Some("Q82425")
   )
