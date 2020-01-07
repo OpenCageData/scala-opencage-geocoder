@@ -98,7 +98,7 @@ package object parts {
     name:         String,
     nowInDst:     Boolean,
     offsetSec:    Int,
-    offsetString: String,
+    offsetString: Int,
     shortName:    String
   )
 
