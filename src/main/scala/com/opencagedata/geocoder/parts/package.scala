@@ -3,7 +3,7 @@ package com.opencagedata.geocoder
 import java.time.Instant
 
 import io.circe.generic.extras.{ Configuration, ConfiguredJsonCodec }
-import io.circe.{ Decoder, Encoder }
+import io.circe.{ Decoder, DecodingFailure, Encoder, HCursor }
 
 package object parts {
 
@@ -14,6 +14,27 @@ package object parts {
 
   implicit val decodeBoolean: Decoder[Boolean] = Decoder.decodeInt.map { i: Int => i != 0 }
   implicit val encodeBoolean: Encoder[Boolean] = Encoder.encodeInt.contramap[Boolean]({ b: Boolean => if (b) 1 else 0 })
+
+  implicit val decodeIntFromStringWithPotentialLeadingZero =
+    new Decoder[Int] {
+      override def apply(c: HCursor): Decoder.Result[Int] = {
+        val result = Decoder.decodeInt(c)
+        result match {
+          case Right(_) => result
+          case Left(_) =>
+            Decoder.decodeString(c) match {
+              case Right(s) => Right(Integer.parseInt(s))
+              case Left(_) =>
+                Left(
+                  DecodingFailure(
+                    "IntFromStringWithPotentialLeadingZero",
+                    c.history
+                  )
+                )
+            }
+        }
+      }
+    }
 
   @ConfiguredJsonCodec case class LatLong(lat: Float, lng: Float)
 

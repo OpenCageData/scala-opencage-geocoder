@@ -32,6 +32,14 @@ class OpenCageResponseDeserializationTest extends FlatSpec with Matchers {
     assertResult(DeserializationsResponseData.annotationsMapped)(decodedResponse.right.get.results(0).annotations.get)
   }
 
+  it should "handle annotations with string offset with leading zero correctly" in {
+    val decodedResponse = decode[OpenCageResponse](DeserializationsResponseData.validReverseResponseWithAnnotationsAndStringOffset)
+
+    assert(decodedResponse.isRight)
+    assert(decodedResponse.right.get.results.size == 1)
+    assertResult(DeserializationsResponseData.annotationsWithStringOffsetMapped)(decodedResponse.right.get.results(0).annotations.get)
+  }
+
   it should "handle errors correctly" in {
     val decodedResponse = decode[OpenCageResponse](DeserializationsResponseData.validError)
 
@@ -404,6 +412,189 @@ object DeserializationsResponseData {
     status = Status(200, "OK"),
     timestamp = ServerTimestamp(DeserializationsResponseData.nowFormatted, Instant.ofEpochSecond(DeserializationsResponseData.now)),
     totalResults = 1
+  )
+
+  /**
+   * Valid response data without annotations with string offset
+   *
+   * Note the offset_string value has a leading 0 and is wrapped as a string
+   */
+  val validReverseResponseWithAnnotationsAndStringOffset =
+    s"""
+	         |{
+	         |   "documentation" : "https://geocoder.opencagedata.com/api",
+	         |   "licenses" : [
+	         |      {
+	         |         "name" : "CC-BY-SA",
+	         |         "url" : "http://creativecommons.org/licenses/by-sa/3.0/"
+	         |      }
+	         |   ],
+	         |   "rate" : {
+	         |      "limit" : 2500,
+	         |      "remaining" : 2499,
+	         |      "reset" : $tomorrow
+	         |   },
+	         |   "results" : [
+	         |      {
+	         |         "annotations" : {
+	         |            "DMS" : {
+	         |               "lat" : "52\u00b0 30' 58.59612'' N",
+	         |               "lng" : "13\u00b0 22' 39.72900'' E"
+	         |            },
+	         |            "MGRS" : "33UUU8991719699",
+	         |            "Maidenhead" : "JO62qm53hv",
+	         |            "Mercator" : {
+	         |               "x" : 1489199.031,
+	         |               "y" : 6860089.217
+	         |            },
+	         |            "OSM" : {
+	         |               "edit_url" : "https://www.openstreetmap.org/edit?way=518071791#map=17/52.51628/13.37770",
+	         |               "url" : "https://www.openstreetmap.org/?mlat=52.51628&mlon=13.37770#map=17/52.51628/13.37770"
+	         |            },
+	         |            "callingcode" : 49,
+	         |            "currency" : {
+	         |               "alternate_symbols" : [],
+	         |               "decimal_mark" : ",",
+	         |               "html_entity" : "&#x20AC;",
+	         |               "iso_code" : "EUR",
+	         |               "iso_numeric" : 978,
+	         |               "name" : "Euro",
+	         |               "smallest_denomination" : 1,
+	         |               "subunit" : "Cent",
+	         |               "subunit_to_unit" : 100,
+	         |               "symbol" : "\u20ac",
+	         |               "symbol_first" : 1,
+	         |               "thousands_separator" : "."
+	         |            },
+	         |            "flag" : "\ud83c\udde9\ud83c\uddea",
+	         |            "geohash" : "u33db2m37p9bznzem3pq",
+	         |            "qibla" : 136.64,
+	         |            "sun" : {
+	         |               "rise" : {
+	         |                  "apparent" : $now,
+	         |                  "astronomical" : $now,
+	         |                  "civil" : $now,
+	         |                  "nautical" : $now
+	         |               },
+	         |               "set" : {
+	         |                  "apparent" : $now,
+	         |                  "astronomical" : $now,
+	         |                  "civil" : $now,
+	         |                  "nautical" : $now
+	         |               }
+	         |            },
+	         |            "timezone" : {
+	         |                "name":"America/New_York",
+	         |                "now_in_dst":0,
+	         |                "offset_sec":-18000,
+	         |                "offset_string":"-0500",
+	         |                "short_name":"EST"
+	         |            },
+	         |            "what3words" : {
+	         |               "words" : "glosses.hood.bags"
+	         |            },
+	         |            "wikidata" : "Q82425"
+	         |         },
+	         |         "bounds" : {
+	         |            "northeast" : {
+	         |               "lat" : 52.5164327,
+	         |               "lng" : 13.377825
+	         |            },
+	         |            "southwest" : {
+	         |               "lat" : 52.5161167,
+	         |               "lng" : 13.37758
+	         |            }
+	         |         },
+	         |         "components" : {
+	         |            "ISO_3166-1_alpha-2" : "DE",
+	         |            "_type" : "attraction",
+	         |            "attraction" : "Brandenburg Gate",
+	         |            "city" : "Berlin",
+	         |            "city_district" : "Mitte",
+	         |            "country" : "Germany",
+	         |            "country_code" : "de",
+	         |            "house_number" : "1",
+	         |            "political_union" : "European Union",
+	         |            "postcode" : "10117",
+	         |            "road" : "Pariser Platz",
+	         |            "state" : "Berlin",
+	         |            "suburb" : "Mitte"
+	         |         },
+	         |         "confidence" : 9,
+	         |         "formatted" : "Brandenburg Gate, Pariser Platz 1, 10117 Berlin, Germany",
+	         |         "geometry" : {
+	         |            "lat" : 52.5162767,
+	         |            "lng" : 13.3777025
+	         |         }
+	         |      }
+	         |   ],
+	         |   "status" : {
+	         |      "code" : 200,
+	         |      "message" : "OK"
+	         |   },
+	         |   "stay_informed" : {
+	         |      "blog" : "https://blog.opencagedata.com",
+	         |      "twitter" : "https://twitter.com/opencagedata"
+	         |   },
+	         |   "thanks" : "For using an OpenCage Data API",
+	         |   "timestamp" : {
+	         |      "created_http" : "$nowFormatted",
+	         |      "created_unix" : $now
+	         |   },
+	         |   "total_results" : 1
+	         |}
+	      """.stripMargin
+
+  val annotationsWithStringOffsetMapped = Annotations(
+    dms = Some(DMS("52\u00b0 30' 58.59612'' N", "13\u00b0 22' 39.72900'' E")),
+    mgrs = Some("33UUU8991719699"),
+    maidenhead = Some("JO62qm53hv"),
+    mercator = Some(MercatorProjection(1489199.031f, 6860089.217f)),
+    osm = Some(
+      OSM(
+        "https://www.openstreetmap.org/edit?way=518071791#map=17/52.51628/13.37770",
+        "https://www.openstreetmap.org/?mlat=52.51628&mlon=13.37770#map=17/52.51628/13.37770"
+      )
+    ),
+    currency = Some(
+      Currency(
+        alternateSymbols = Some(List()),
+        decimalMark = Some(","),
+        htmlEntity = Some("&#x20AC;"),
+        isoCode = Some("EUR"),
+        isoNumeric = Some(978),
+        name = Some("Euro"),
+        smallestDenomination = Some(1),
+        subunit = Some("Cent"),
+        subunitToUnit = Some(100),
+        symbol = Some("\u20ac"),
+        symbolFirst = Some(1),
+        thousandsSeparator = Some(".")
+      )
+    ),
+    flag = Some("\ud83c\udde9\ud83c\uddea"),
+    callingCode = Some(49),
+    geohash = Some("u33db2m37p9bznzem3pq"),
+    qibla = Some(136.64f),
+    sun = Some(
+      Sun(
+        rise = SunTimings(
+          Instant.ofEpochSecond(now),
+          Instant.ofEpochSecond(now),
+          Instant.ofEpochSecond(now),
+          Instant.ofEpochSecond(now)
+        ),
+        set = SunTimings(
+          Instant.ofEpochSecond(now),
+          Instant.ofEpochSecond(now),
+          Instant.ofEpochSecond(now),
+          Instant.ofEpochSecond(now)
+        )
+      )
+    ),
+    timezone = Some(Timezone("America/New_York", false, -18000, -500, "EST")),
+    what3Words = Some(What3Words("glosses.hood.bags")),
+    wikidata = Some("Q82425")
   )
 
   /**
