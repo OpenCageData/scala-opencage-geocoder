@@ -1,0 +1,27 @@
+name: CI Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        # https://www.scala-lang.org/download/all.html
+        scala-version: ['2.11.8', '2.12.8']
+
+    name: Scala OpenCage Geocoder
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Scala ${{ matrix.scala-version }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'microsoft' # https://github.com/marketplace/actions/setup-java-jdk#supported-version-syntax
+          java-version: '11.0.19'
+
+      - name: Run tests
+        run: sbt ++${{ matrix.scala-version }} coverage test

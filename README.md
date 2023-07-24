@@ -1,6 +1,6 @@
-# scala-opencage-geocoder
+    # scala-opencage-geocoder
 
-[![Build Status](https://travis-ci.org/OpenCageData/scala-opencage-geocoder.svg?branch=master)](https://travis-ci.org/OpenCageData/scala-opencage-geocoder)
+[![Build Status](https://github.com/OpenCageData/scala-opencage-geocoder/actions/workflows/ci.yml/badge.svg)](https://github.com/OpenCageData/scala-opencage-geocoder/actions/workflows/ci.yml)
 
 This is a client library for the [OpenCage Forward and Reverse geocoding APIs](https://opencagedata.com/api).
 You will need to have an API key to be able to issue requests. You can register for free [here](https://opencagedata.com/users/sign_up).
