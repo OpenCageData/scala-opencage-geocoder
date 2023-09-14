@@ -10,5 +10,5 @@ licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT"))
 // Where is the source code hosted
 import xerial.sbt.Sonatype._
 
-sonatypeProjectHosting := Some(GitHubHosting("OpenCageData  ", "scala-opencage-geocoder", "support@opencagedata.com"))
+sonatypeProjectHosting := Some(GitHubHosting("OpenCageData", "scala-opencage-geocoder", "support@opencagedata.com"))
 

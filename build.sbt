@@ -2,10 +2,12 @@ name := "scala-opencage-geocoder"
 organization := "com.opencagedata"
 version := "1.1.1"
 
+// lazy val scala_3_3 = "3.3.1"
+lazy val scala_2_13 = "2.13.12"
 lazy val scala_2_12 = "2.12.8"
-lazy val scala_2_11 = "2.11.8"
+lazy val scala_2_11 = "2.11.12"
 scalaVersion := scala_2_12
-crossScalaVersions := List(scala_2_11, scala_2_12)
+crossScalaVersions := List(scala_2_11, scala_2_12, scala_2_13)
 
 scalacOptions += "-feature"
 
