@@ -150,7 +150,7 @@ Using Scala `2.12.8`, use `"scopt" % "4.1.0"`, and `"scala-opencage-geocoder" % 
 Then if you'd like to try the sample application included with this library, just run (e.g. forward geocoding the Brandenburg Gate):
 
 ```
-    sbt 'runMain -q "Brandenburg Gate" -k <your key>'
+    sbt 'runMain runMain com.github.nmdguerreiro.opencage.geocoder.OpenCageClientForwardDemoApp -q "Brandenburg Gate" -k <your key>'
 ```
 
 ## Client configuration
