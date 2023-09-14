@@ -5,7 +5,7 @@
 This is a client library for the [OpenCage Forward and Reverse geocoding APIs](https://opencagedata.com/api).
 You will need to have an API key to be able to issue requests. You can register for free [here](https://opencagedata.com/users/sign_up).
 
-Before using this library please have a look at [best practices for using the OpenCage API](https://opencagedata.com/api#bestpractices), 
+Before using this library please have a look at [best practices for using the OpenCage API](https://opencagedata.com/api#bestpractices),
 particularly OpenCage's advice for [how to format forward geocoding queries](https://github.com/OpenCageData/opencagedata-misc-docs/blob/master/query-formatting.md).
 
 ## Building
@@ -31,7 +31,7 @@ To perform forward geocoding, all you need to do is call the `forwardGeocode` me
     }
 ```
 
-Note that the client is non-blocking, so if you're handling responses in an async way, you won't need to await for the future. 
+Note that the client is non-blocking, so if you're handling responses in an async way, you won't need to await for the future.
 
 ## Reverse geocoding
 
@@ -62,7 +62,7 @@ if (response.status.code == 200 & response.results.isEmpty) {
 }
 ```
 
-Note that the client is non-blocking, so if you're handling responses in an async way, you won't need to await for the future. 
+Note that the client is non-blocking, so if you're handling responses in an async way, you won't need to await for the future.
 
 ## Closing the client
 
@@ -71,10 +71,10 @@ To make sure you don't leave resources dangling around, make sure you call the `
 ## Parameters
 
 The parameters sent by the client to the OpenCage APIs can be overridden (see [this](https://opencagedata.com/api#forward-opt)), by using the `params` parameter:
- 
+
 ```scala
     val bounds = Some((minimumLongitude, minimumLatitude, maximumLongitude, maximumLatitude))
-    
+
     val params = OpenCageClientParams(abbreviate = true,
                                      bounds = bounds,
                                      countryCodes = List("fr,bl,gf,gp,mf,mq,nc,pf,pm,re,tf,wf,yt"),
@@ -84,9 +84,9 @@ The parameters sent by the client to the OpenCage APIs can be overridden (see [t
                                      withoutAnnotations = false,
                                      withoutDeduplication = true,
                                      withoutRecord = true)
-                                     
+
     client.reverseGeocode(latitude, longitude, params)
-    
+
 ```
 
 This is particularly useful for forward geocoding to help improve your results.
@@ -101,6 +101,7 @@ package com.github.nmdguerreiro.opencage.geocoder
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
+import com.opencagedata.geocoder.OpenCageClient
 
 /**
  * A simple sample app to show how to use the client.
@@ -144,10 +145,12 @@ libraryDependencies ++= Seq(
 )
 ```
 
+Using Scala `2.12.8`, use `"scopt" % "4.1.0"`, and `"scala-opencage-geocoder" % "1.1.1"`
+
 Then if you'd like to try the sample application included with this library, just run (e.g. forward geocoding the Brandenburg Gate):
 
 ```
-    sbt 'run -q "Brandenburg Gate" -k <your key>'
+    sbt 'runMain -q "Brandenburg Gate" -k <your key>'
 ```
 
 ## Client configuration
@@ -163,24 +166,25 @@ The client can be configured by passing one or more of the optional constructor 
                                     backend: SttpBackend[Future, Nothing] = OpenCageClient.defaultBackend)
 ```
 
-* `scheme` - Allows you to specify if the request is to be made over HTTP or HTTPS (for testing purposes, if you're mocking the API)
-* `hostname` - Allows you to specify the hostname (for testing purposes, if you're mocking the API)
-* `port` - Allows you to specify the port (for testing purposes, if you're mocking the API)
-* `executionContext` - Allows you to specify the thread pool to be used for processing the responses
-* `backend` - Allows you to specify a different backend, or to customise the default one.
+- `scheme` - Allows you to specify if the request is to be made over HTTP or HTTPS (for testing purposes, if you're mocking the API)
+- `hostname` - Allows you to specify the hostname (for testing purposes, if you're mocking the API)
+- `port` - Allows you to specify the port (for testing purposes, if you're mocking the API)
+- `executionContext` - Allows you to specify the thread pool to be used for processing the responses
+- `backend` - Allows you to specify a different backend, or to customise the default one.
 
 ### Customising the backend
 
 The client uses the [async-http-client](https://github.com/AsyncHttpClient/async-http-client) backend from [sttp](http://sttp.readthedocs.io/en/latest/backends/asynchttpclient.html) by default.
 
 However, you can configure `async-http-client` by using your own config object as per below (e.g. setting maximum number of connections in the pool):
- 
+
 ```scala
     val config = new DefaultAsyncHttpClientConfig.Builder().setMaxConnections(10).build()
     val backend = AsyncHttpClientFutureBackend.withConfig(config)
 ```
 
 Or by specifying options, such as a connection timeout or proxy by using custom backend options directly via `sttp`:
+
 ```scala
     val options = SttpBackendOptions(connectionTimeout, proxy)
     val backend = AsyncHttpClientFutureBackend(options)
@@ -190,12 +194,12 @@ Finally, you can also implement your own `sttp` backend, as long as it's asynchr
 
 ## Publishing (only of interest for developers of this library)
 
-Make sure you have your file keys `pubring.asc` and `secring.asc` in `~/.sbt/gpg/`. 
+Make sure you have your file keys `pubring.asc` and `secring.asc` in `~/.sbt/gpg/`.
 
-If those files are a new pair of key files, you have to publish to Sonatype's keyserver with 
+If those files are a new pair of key files, you have to publish to Sonatype's keyserver with
 `sbt  pgp-cmd <key id> hkp://pool.sks-keyservers.net`
 
-Then just follow standard procedure [using sbt-sonatype plugin](https://www.scala-sbt.org/1.x/docs/Using-Sonatype.html#sbt-sonatype). 
+Then just follow standard procedure [using sbt-sonatype plugin](https://www.scala-sbt.org/1.x/docs/Using-Sonatype.html#sbt-sonatype).
 Remember to create file `~/.sbt/opencage_sonatype_credentials` with contents
 
 ```
@@ -217,7 +221,6 @@ sbt:scala-opencage-geocoder> sonatypeRelease
 
 This code was originally written by [Nuno Guerreiro](https://github.com/nmdguerreiro/) who later transfered it to the OpenCage organisation. Thank you Nuno!
 
-License
--------
+## License
 
 [MIT License](LICENSE.md).
