@@ -1,4 +1,4 @@
-    # scala-opencage-geocoder
+# scala-opencage-geocoder
 
 [![Build Status](https://github.com/OpenCageData/scala-opencage-geocoder/actions/workflows/ci.yml/badge.svg)](https://github.com/OpenCageData/scala-opencage-geocoder/actions/workflows/ci.yml)
 
