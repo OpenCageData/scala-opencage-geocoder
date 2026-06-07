@@ -141,7 +141,7 @@ and don't forget to add `Scopt` and `OpenCage` dependencies with desired version
 ```scala
 libraryDependencies ++= Seq(
     "com.github.scopt" %% "scopt" % "X.Y.Z",
-    "com.opengagedata" %% "scala-opencage-geocoder" % "X.Y.Z"
+    "com.opencagedata" %% "scala-opencage-geocoder" % "X.Y.Z"
 )
 ```
 
